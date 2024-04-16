@@ -1,10 +1,10 @@
 # NLP project 1: Quora Question Pairs Challenge
 
-Goal of the challenge:
+Goal of the [challenge](https://www.kaggle.com/c/quora-question-pairs):
 Tackle this natural language processing problem by applying advanced techniques to classify whether question pairs are duplicates or not.
 
 # Collaborators:
-- Alba
+- Alba 
 - Alejandro
 - Joel
 - Clàudia
