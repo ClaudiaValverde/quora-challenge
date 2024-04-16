@@ -8,3 +8,15 @@ Tackle this natural language processing problem by applying advanced techniques 
 - Alejandro
 - Joel
 - Clàudia
+
+# Repositeroy Content 
+- <utils.py>
+- <utils_Clàudia.ipynb>
+- <utils_Alba.ipynb>
+- <utils_Alejandro.ipynb>
+- <utils_Joel.ipynb>
+- <train_models.ipynb>
+- <reproduce_results.ipynb>
+- <Mansucript_Report.pdf>
+
+# Reproducing Results
