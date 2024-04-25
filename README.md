@@ -17,6 +17,6 @@ Tackle this natural language processing problem by applying advanced techniques 
 - `utils_Joel.ipynb` :
 - `train_models.ipynb` :
 - `reproduce_results.ipynb` :
-- Mansucript_Report.pdf :  short 
+- Mansucript_Report.pdf :  https://www.overleaf.com/9513681351wbrhnzwnhbbk#a256e9 
 
 # Reproducing Results
