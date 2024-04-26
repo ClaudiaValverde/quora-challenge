@@ -7,6 +7,8 @@ import spacy
 import gensim.models.word2vec as w2v
 from gensim.models import KeyedVectors
 from gensim.models import Word2Vec
+import multiprocessing
+from utils import *
 
 '''
     These are the main functions to manipulate
@@ -79,7 +81,7 @@ def preproces_data_Word2Vect(df):
         out.append(txt)
     return np.array(out)
 
-def train_Word2Vect(df_clean=pd.read_csv('clean_w2v_data.csv'), num_features = 300, num_epochs = 20,
+def train_Word2Vect(df_clean, num_features = 300, num_epochs = 20,
                     min_word_count = 0, num_workers = multiprocessing.cpu_count(), context_size = 5, 
                     downsampling = 1e-3, seed = 1, sg = 0, save=True):
     '''
@@ -109,7 +111,7 @@ def sentence_to_wordlist(raw):
         Routine to separate sentence into
         wordlist.
     '''
-    clean = re.sub("^a-zA-Z", " ", raw)
+    clean = re.sub("[^a-zA-Z0-9]", " ", str(raw))
     clean = clean.lower()
     words = clean.split()
     return words
@@ -122,8 +124,9 @@ def doc_to_vec(sentence, word2vec):
     word_list = sentence_to_wordlist(sentence)
     word_vectors = []
     for w in word_list:
-        if w in word2vec.key_to_index.keys():
-            word_vectors.append(word2vec[w])
+        if word2vec.__contains__(w):
+            if word2vec.key_to_index[w] < len(word2vec.vectors):
+                word_vectors.append(word2vec[str(w)])
     return np.mean(word_vectors, axis=0)
 
 def get_Word2Vect(df, word2vec=Word2Vec.load("word2vec.model").wv, phrase2vec=doc_to_vec):
@@ -131,7 +134,7 @@ def get_Word2Vect(df, word2vec=Word2Vec.load("word2vec.model").wv, phrase2vec=do
         Function that receives data to be cleaned and
         then converts it to vectors.
     '''
-    data = preproces_data_Word2Vect(df, save=False)
+    data = preproces_data_Word2Vect(df)
     out = []
     if len(data.shape) >1:
         for val in data[:,0]:
@@ -173,15 +176,14 @@ def get_Word2Vect_from_clean(df, word2vec=Word2Vec.load("word2vec.model").wv, ph
     if len(data.shape) >1:
         for val in data[:,0]:
             out.append(doc_to_vec(val,word2vec))
-        array = np.array(out)
+        array = out[:]
         for i in range(1, data.shape[1]):
             out = []
             for val in data[:,i]:
                 out.append(doc_to_vec(val,word2vec))
-            out = np.array(out)
-            array = np.stack((array,out))
+            array = [array,out]
     else:
         for val in data:
             out.append(doc_to_vec(val,word2vec))
-        array = np.array(out)
+        array = out[:]
     return array
