@@ -127,6 +127,15 @@ def evaluate_model(X, y_true, model, display=False):
 
 ##################### begin utils from utils_Alba #########################
 
+from nltk.tokenize import sent_tokenize, word_tokenize
+from nltk.stem import PorterStemmer
+from nltk.stem import LancasterStemmer
+porter = PorterStemmer()
+lancaster = LancasterStemmer()
+from nltk.stem import WordNetLemmatizer
+wordnet_lemmatizer = WordNetLemmatizer()
+
+
 # all lower case sentence
 def lowercase_sentence(sentence):
     """
