@@ -126,15 +126,6 @@ import os
 import unidecode
 from nltk.corpus import stopwords
 
-from nltk.tokenize import sent_tokenize, word_tokenize
-from nltk.stem import PorterStemmer
-from nltk.stem import LancasterStemmer
-porter = PorterStemmer()
-lancaster = LancasterStemmer()
-from nltk.stem import WordNetLemmatizer
-wordnet_lemmatizer = WordNetLemmatizer()
-
-
 # all lower case sentence
 def lowercase_sentence(sentence):
     """
@@ -407,13 +398,13 @@ from gensim.models import Word2Vec
 
 import multiprocessing
 
-'''
+
     These are the main functions to manipulate
     and work around word2vect. They use regular
     expressions, and a pretrained pipeline from
     spacy to perform a series of operations to
     the data before introducing it into the 
-'''
+
 
 def cleaning(doc):
     '''
@@ -525,7 +516,7 @@ def doc_to_vec(sentence, word2vec):
                 word_vectors.append(word2vec[str(w)])
     return np.mean(word_vectors, axis=0)
 
-def get_Word2Vect(df, word2vec=Word2Vec.load("model/word2vect/word2vec.model").wv, phrase2vec=doc_to_vec):
+def get_Word2Vect(df, word2vec=Word2Vec.load("word2vec.model").wv, phrase2vec=doc_to_vec):
     '''
         Function that receives data to be cleaned and
         then converts it to vectors.
@@ -548,7 +539,7 @@ def get_Word2Vect(df, word2vec=Word2Vec.load("model/word2vect/word2vec.model").w
         array = np.array(out)
     return array
 
-def get_Word2Vect_from_clean(df, word2vec=Word2Vec.load("model/word2vect/word2vec.model").wv, phrase2vec=doc_to_vec):
+def get_Word2Vect_from_clean(df, word2vec=Word2Vec.load("word2vec.model").wv, phrase2vec=doc_to_vec):
     '''
         Function that receives celan data and
         then converts it to vectors.
@@ -583,7 +574,8 @@ def get_Word2Vect_from_clean(df, word2vec=Word2Vec.load("model/word2vect/word2ve
             out.append(doc_to_vec(val,word2vec))
         array = out[:]
     return array
-#   word2vec model.
+    word2vec model.
+
 ##################### end utils from utils_Alejandro #########################
 
 
