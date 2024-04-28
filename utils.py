@@ -6,6 +6,8 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from sklearn.metrics.pairwise import cosine_similarity
+from tqdm import tqdm
 
 
 def cast_list_as_strings(mylist):
@@ -399,11 +401,11 @@ from gensim.models import Word2Vec
 import multiprocessing
 
 
-    These are the main functions to manipulate
-    and work around word2vect. They use regular
-    expressions, and a pretrained pipeline from
-    spacy to perform a series of operations to
-    the data before introducing it into the 
+    #These are the main functions to manipulate
+    #and work around word2vect. They use regular
+    #expressions, and a pretrained pipeline from
+    #spacy to perform a series of operations to
+    #the data before introducing it into the
 
 
 def cleaning(doc):
@@ -516,11 +518,13 @@ def doc_to_vec(sentence, word2vec):
                 word_vectors.append(word2vec[str(w)])
     return np.mean(word_vectors, axis=0)
 
-def get_Word2Vect(df, word2vec=Word2Vec.load("word2vec.model").wv, phrase2vec=doc_to_vec):
+def get_Word2Vect(df, word2vec=None, phrase2vec=doc_to_vec):
     '''
         Function that receives data to be cleaned and
         then converts it to vectors.
     '''
+    if word2vec == None:
+        word2vec = Word2Vec.load("word2vec.model").wv
     data = preproces_data_Word2Vect(df)
     out = []
     if len(data.shape) >1:
@@ -539,7 +543,7 @@ def get_Word2Vect(df, word2vec=Word2Vec.load("word2vec.model").wv, phrase2vec=do
         array = np.array(out)
     return array
 
-def get_Word2Vect_from_clean(df, word2vec=Word2Vec.load("word2vec.model").wv, phrase2vec=doc_to_vec):
+def get_Word2Vect_from_clean(df, word2vec=None, phrase2vec=doc_to_vec):
     '''
         Function that receives celan data and
         then converts it to vectors.
@@ -558,6 +562,8 @@ def get_Word2Vect_from_clean(df, word2vec=Word2Vec.load("word2vec.model").wv, ph
         
         pre.save("pretrained.model")
     '''
+    if word2vec == None:
+        word2vec = Word2Vec.load("word2vec.model").wv
     data = df.values
     out = []
     if len(data.shape) >1:
@@ -574,7 +580,6 @@ def get_Word2Vect_from_clean(df, word2vec=Word2Vec.load("word2vec.model").wv, ph
             out.append(doc_to_vec(val,word2vec))
         array = out[:]
     return array
-    word2vec model.
 
 ##################### end utils from utils_Alejandro #########################
 
@@ -622,3 +627,77 @@ def jaccard_similarity(s1, s2):
     intersection = len(set1.intersection(set2))  # Compute intersection
     union = len(set1.union(set2))  # Compute union
     return intersection / union if union != 0 else 0  # Compute Jaccard similarity
+
+
+##################### begin utils from utils_Joel #########################
+
+def evaluate_scores(scores, y_true, display=False):
+    '''
+    function that evaluates the scores obtained from a non sklearn model.
+    It returns of ROC AUC score, precision, recall as well as accuracy and f1.
+    
+    Args:
+    - scores: predicted scores
+    - y_true: labels of the data
+    - display: is a boolean, if True it will print all evaluation metrics and grafics just by calling the function. If false, it will only return metrics ditionary.
+    
+    Returns:
+    - y_pred: predictions
+    - Metrics dict:
+        Accuracy
+        F1
+        Precision
+        Recall
+        ROC AUC score
+        ##########should we do log-loss????????
+    - classificacion report with precision, recall, acc and f1 for each class
+    - plots a confusion matrix
+    '''
+    y_pred = np.round(scores)
+    metrics = {}
+    
+    accuracy = sklearn.metrics.accuracy_score(y_pred, y_true)
+    roc_auc = sklearn.metrics.roc_auc_score(y_true, y_pred)
+    precision = sklearn.metrics.precision_score(y_true, y_pred)
+    recall = sklearn.metrics.recall_score(y_true, y_pred)
+    f1 = sklearn.metrics.f1_score(y_true, y_pred)
+    
+    metrics = {'accuracy': accuracy, 'roc_auc':roc_auc, 'precision':precision, 'recall':recall, 'f1':f1}
+    
+    if display==True:
+        print('METRICS:', '\n', '---'*30)
+        print('Accuracy: ', metrics['accuracy'])
+        print('F1: ',metrics['f1'])
+        print('Precision: ', metrics['precision'])
+        print('Recall: ', metrics['recall'])
+        print('ROC AUC: ', metrics['roc_auc'])
+        
+    
+        # printint classification report with acc, f1, precision and recall
+        print('\n CLASSIFICATION REPORT:', '\n', '---'*30)
+        print(sklearn.metrics.classification_report(y_true, y_pred, target_names=['Negative', 'Positive']))
+
+        # ploting confusion matrix
+        print('CONFUSION MATRIX:', '\n', '---'*30)
+        cm = sklearn.metrics.confusion_matrix(y_true, y_pred)
+        plt.figure(figsize=(5, 5))
+        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+        plt.xlabel('Predicted')
+        plt.ylabel('Actual')
+
+    return metrics
+
+def calculate_embeddings(model, X):
+    q1s = [x[0] for x in X]
+    q2s = [x[1] for x in X]
+    emb1s = model.encode(q1s)
+    emb2s = model.encode(q2s)
+    return emb1s, emb2s
+
+
+def calculate_distances(emb1s, emb2s):
+    dists = []
+    for emb1, emb2 in tqdm(zip(emb1s, emb2s)):
+        dist = cosine_similarity(emb1.reshape(1, -1), emb2.reshape(1, -1))
+        dists.append(dist[0][0])
+    return dists
