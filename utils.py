@@ -126,6 +126,15 @@ import os
 import unidecode
 from nltk.corpus import stopwords
 
+from nltk.tokenize import sent_tokenize, word_tokenize
+from nltk.stem import PorterStemmer
+from nltk.stem import LancasterStemmer
+porter = PorterStemmer()
+lancaster = LancasterStemmer()
+from nltk.stem import WordNetLemmatizer
+wordnet_lemmatizer = WordNetLemmatizer()
+
+
 # all lower case sentence
 def lowercase_sentence(sentence):
     """
