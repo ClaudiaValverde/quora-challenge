@@ -583,7 +583,7 @@ def get_Word2Vect_from_clean(df, word2vec=Word2Vec.load("model/word2vect/word2ve
             out.append(doc_to_vec(val,word2vec))
         array = out[:]
     return array
-    word2vec model.
+#   word2vec model.
 ##################### end utils from utils_Alejandro #########################
 
 
