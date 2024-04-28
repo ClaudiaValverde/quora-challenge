@@ -6,16 +6,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-import re
-import sys
-import string
-import nltk
-import sklearn
-import numpy as np
-from typing import Iterable
-import os
-import unidecode
-from nltk.corpus import stopwords
+
 
 def cast_list_as_strings(mylist):
     """
@@ -126,6 +117,14 @@ def evaluate_model(X, y_true, model, display=False):
     return metrics
 
 ##################### begin utils from utils_Alba #########################
+import re
+import sys
+import string
+import nltk
+from typing import Iterable
+import os
+import unidecode
+from nltk.corpus import stopwords
 
 # all lower case sentence
 def lowercase_sentence(sentence):
@@ -390,26 +389,22 @@ def build_numeric_features(q1_list, q2_list):
 
 ##################### end utils from utils_Alba #########################
 ##################### start utils from utils_Alejandro #########################
-import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np
+
 import gensim
-import re
 import spacy 
 import gensim.models.word2vec as w2v
 from gensim.models import KeyedVectors
 from gensim.models import Word2Vec
-import multiprocessing
-from utils import *
 
-'''
+import multiprocessing
+
+
     These are the main functions to manipulate
     and work around word2vect. They use regular
     expressions, and a pretrained pipeline from
     spacy to perform a series of operations to
     the data before introducing it into the 
-    word2vec model.
-'''
+
 
 def cleaning(doc):
     '''
@@ -579,4 +574,50 @@ def get_Word2Vect_from_clean(df, word2vec=Word2Vec.load("word2vec.model").wv, ph
             out.append(doc_to_vec(val,word2vec))
         array = out[:]
     return array
+    word2vec model.
 ##################### end utils from utils_Alejandro #########################
+
+
+##################### begin utils from utils_Claudia #########################
+
+'''
+# function using cyton, declared in utils_claudia
+def cy_create_memoization_table(str X, str Y):
+    cdef int i, j, del_char, ins_char, sub_char, Z
+    cdef int len_x = len(X)
+    cdef int len_y = len(Y)
+    cdef int [:, :] D =  np.zeros((len_x + 1, len_y + 1), dtype=np.int32)
+
+    for i in range(len_x+1):
+        D[i,0] = i
+
+    for j in range(len_y+1):
+        D[0,j] = j
+
+    for i in range(1, len_x + 1):
+        for j in range(1, len_y + 1):
+            del_char = D[i-1,j] + 1
+            ins_char = D[i,j-1] + 1
+
+            if X[i-1] == Y[j-1]:
+                Z = 0
+            else:
+                Z = 1
+            sub_char = D[i-1,j-1] + Z
+
+            D[i,j] = min(del_char, ins_char, sub_char)
+    
+    return D
+
+# eucledian distance
+def edit_distance(x,y):
+    return cy_create_memoization_table(x,y)[-1,-1]
+'''  
+
+# Define a function to compute Jaccard similarity between two strings
+def jaccard_similarity(s1, s2):
+    set1 = set(str(s1).lower().split())  # Convert string to set of lowercase words
+    set2 = set(str(s2).lower().split())  # Convert string to set of lowercase words
+    intersection = len(set1.intersection(set2))  # Compute intersection
+    union = len(set1.union(set2))  # Compute union
+    return intersection / union if union != 0 else 0  # Compute Jaccard similarity
