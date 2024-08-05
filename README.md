@@ -19,3 +19,6 @@ Tackle this natural language processing problem by applying advanced techniques 
 - `reproduce_results.ipynb` : the results reported in main.pdf are shown in this notebook.
 - main.pdf : Report of the work done, stating how we have divided the work among the colaborators as well as how we have structured the project, our overall approach and the different experiments that we have implemented and tested. It can also be found in: https://www.overleaf.com/9513681351wbrhnzwnhbbk#a256e9
 - `requirements.txt`: necessary packages and versions to run `reproduce_results.ipynb`.
+
+-----
+Final Grade: 10
